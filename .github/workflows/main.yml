@@ -28,6 +28,16 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
+      - name: Run Android Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Lint-Report
+          path: app/build/reports/lint-results-debug.html
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
