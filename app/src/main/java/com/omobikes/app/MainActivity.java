@@ -1,11 +1,14 @@
 package com.omobikes.app;
 
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,29 +22,17 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             setContentView(R.layout.activity_main);
-            Log.d(TAG, "Layout loaded");
 
             LinearLayout btnCycleFinder = findViewById(R.id.btn_cycle_finder);
             LinearLayout btnPartsFinder = findViewById(R.id.btn_parts_finder);
 
-            if (btnCycleFinder == null) {
-                Log.e(TAG, "btn_cycle_finder is NULL");
-                Toast.makeText(this, "Layout error: btn_cycle_finder not found", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            if (btnPartsFinder == null) {
-                Log.e(TAG, "btn_parts_finder is NULL");
-                Toast.makeText(this, "Layout error: btn_parts_finder not found", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            Log.d(TAG, "Buttons found, attaching listeners");
-
             btnCycleFinder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Cycle Finder clicked");
+                    if (!isConnected()) {
+                        showNoInternetDialog();
+                        return;
+                    }
                     Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
                     intent.putExtra("file", "cycle_finder.html");
                     intent.putExtra("title", "Find a Cycle");
@@ -52,7 +43,10 @@ public class MainActivity extends AppCompatActivity {
             btnPartsFinder.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "Parts Finder clicked");
+                    if (!isConnected()) {
+                        showNoInternetDialog();
+                        return;
+                    }
                     Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
                     intent.putExtra("file", "cycle_parts_finder.html");
                     intent.putExtra("title", "Find Cycle Parts");
@@ -60,11 +54,33 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Log.d(TAG, "MainActivity ready");
-
         } catch (Exception e) {
             Log.e(TAG, "CRASH in MainActivity: " + e.getMessage(), e);
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private boolean isConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        return info != null && info.isConnected();
+    }
+
+    private void showNoInternetDialog() {
+        new AlertDialog.Builder(this)
+            .setTitle("No Internet Connection")
+            .setMessage("Please check your Wi-Fi or mobile data and try again.")
+            .setPositiveButton("OK", null)
+            .show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+            .setTitle("Exit OmoBikes")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Exit", (dialog, which) -> finish())
+            .setNegativeButton("Stay", null)
+            .show();
     }
 }
