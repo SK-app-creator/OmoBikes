@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -13,12 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "OmoBikes";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "MainActivity starting");
 
         try {
             setContentView(R.layout.activity_main);
@@ -55,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
             });
 
         } catch (Exception e) {
-            Log.e(TAG, "CRASH in MainActivity: " + e.getMessage(), e);
             Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -75,15 +70,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-public void onBackPressed() {
-    new AlertDialog.Builder(this)
-        .setTitle("Exit OmoBikes")
-        .setMessage("Are you sure you want to exit?")
-        .setPositiveButton("Exit", (dialog, which) -> {
-            super.onBackPressed();
-            finish();
-        })
-        .setNegativeButton("Stay", null)
-        .show();
-}
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+            .setTitle("Exit OmoBikes")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Exit", (dialog, which) -> {
+                super.onBackPressed();
+                finish();
+            })
+            .setNegativeButton("Stay", null)
+            .show();
+    }
 }
