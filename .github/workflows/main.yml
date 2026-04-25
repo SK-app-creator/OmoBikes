@@ -38,11 +38,40 @@ jobs:
           name: Lint-Report
           path: app/build/reports/lint-results-debug.html
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug
+      - name: Generate Keystore
+        run: |
+          keytool -genkey -v \
+            -keystore omobikes.jks \
+            -alias omobikes \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass omobikes2026 \
+            -keypass omobikes2026 \
+            -dname "CN=OmoBikes, OU=Mobile, O=OmoBikes, L=India, S=India, C=IN"
 
-      - name: Upload APK
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Sign Release APK
+        run: |
+          jarsigner -verbose \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            -keystore omobikes.jks \
+            -storepass omobikes2026 \
+            -keypass omobikes2026 \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            omobikes
+
+      - name: Align APK
+        run: |
+          ${ANDROID_HOME}/build-tools/33.0.1/zipalign -v 4 \
+            app/build/outputs/apk/release/app-release-unsigned.apk \
+            app/build/outputs/apk/release/OmoBikes-release.apk
+
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: OmoBikes-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: OmoBikes-release
+          path: app/build/outputs/apk/release/OmoBikes-release.apk
