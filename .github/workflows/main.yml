@@ -53,21 +53,20 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
-      - name: Sign Release APK
+      - name: Sign APK with apksigner
         run: |
-          jarsigner -verbose \
-            -sigalg SHA256withRSA \
-            -digestalg SHA-256 \
-            -keystore omobikes.jks \
-            -storepass omobikes2026 \
-            -keypass omobikes2026 \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
-            omobikes
+          ${ANDROID_HOME}/build-tools/33.0.1/apksigner sign \
+            --ks omobikes.jks \
+            --ks-pass pass:omobikes2026 \
+            --key-pass pass:omobikes2026 \
+            --ks-key-alias omobikes \
+            --out app/build/outputs/apk/release/OmoBikes-release.apk \
+            app/build/outputs/apk/release/app-release-unsigned.apk
 
-      - name: Align APK
+      - name: Verify APK signature
         run: |
-          ${ANDROID_HOME}/build-tools/33.0.1/zipalign -v 4 \
-            app/build/outputs/apk/release/app-release-unsigned.apk \
+          ${ANDROID_HOME}/build-tools/33.0.1/apksigner verify \
+            --verbose \
             app/build/outputs/apk/release/OmoBikes-release.apk
 
       - name: Upload Release APK
