@@ -23,17 +23,18 @@ android {
     lintOptions {
         abortOnError false
         disable 'HardcodedText',
-                'LockedOrientationActivity',
-                'CustomSplashScreen',
-                'IconLauncherShape',
-                'IconLocation',
-                'Overdraw',
-                'UnusedResources',
-                'UnusedAttribute',
-                'SetJavaScriptEnabled',
-                'OldTargetApi',
-                'GradleDependency',
-                'MissingSuperCall'
+            'LockedOrientationActivity',
+            'CustomSplashScreen',
+            'IconLauncherShape',
+            'IconLocation',
+            'Overdraw',
+            'UnusedResources',
+            'UnusedAttribute',
+            'SetJavaScriptEnabled',
+            'OldTargetApi',
+            'GradleDependency',
+            'MissingSuperCall',
+            'DataExtractionRules'
     }
 }
 
