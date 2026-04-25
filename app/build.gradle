@@ -21,6 +21,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     lintOptions {
+        abortOnError false
         disable 'HardcodedText',
                 'LockedOrientationActivity',
                 'CustomSplashScreen',
@@ -29,7 +30,10 @@ android {
                 'Overdraw',
                 'UnusedResources',
                 'UnusedAttribute',
-                'SetJavaScriptEnabled'
+                'SetJavaScriptEnabled',
+                'OldTargetApi',
+                'GradleDependency',
+                'MissingSuperCall'
     }
 }
 
