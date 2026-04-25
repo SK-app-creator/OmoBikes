@@ -75,12 +75,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-            .setTitle("Exit OmoBikes")
-            .setMessage("Are you sure you want to exit?")
-            .setPositiveButton("Exit", (dialog, which) -> finish())
-            .setNegativeButton("Stay", null)
-            .show();
-    }
+public void onBackPressed() {
+    new AlertDialog.Builder(this)
+        .setTitle("Exit OmoBikes")
+        .setMessage("Are you sure you want to exit?")
+        .setPositiveButton("Exit", (dialog, which) -> {
+            super.onBackPressed();
+            finish();
+        })
+        .setNegativeButton("Stay", null)
+        .show();
+}
 }
