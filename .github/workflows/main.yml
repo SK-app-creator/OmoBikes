@@ -50,27 +50,31 @@ jobs:
             -keypass omobikes2026 \
             -dname "CN=OmoBikes, OU=Mobile, O=OmoBikes, L=India, S=India, C=IN"
 
-      - name: Build Release APK
-        run: ./gradlew assembleRelease
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
 
-      - name: Sign APK with apksigner
+      - name: Sign AAB
         run: |
-          ${ANDROID_HOME}/build-tools/33.0.1/apksigner sign \
-            --ks omobikes.jks \
-            --ks-pass pass:omobikes2026 \
-            --key-pass pass:omobikes2026 \
-            --ks-key-alias omobikes \
-            --out app/build/outputs/apk/release/OmoBikes-release.apk \
-            app/build/outputs/apk/release/app-release-unsigned.apk
+          jarsigner -verbose \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            -keystore omobikes.jks \
+            -storepass omobikes2026 \
+            -keypass omobikes2026 \
+            app/build/outputs/bundle/release/app-release.aab \
+            omobikes
 
-      - name: Verify APK signature
-        run: |
-          ${ANDROID_HOME}/build-tools/33.0.1/apksigner verify \
-            --verbose \
-            app/build/outputs/apk/release/OmoBikes-release.apk
-
-      - name: Upload Release APK
+      - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-          name: OmoBikes-release
-          path: app/build/outputs/apk/release/OmoBikes-release.apk
+          name: OmoBikes-release-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+
+      - name: Build Debug APK (for phone testing)
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: OmoBikes-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
